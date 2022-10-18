@@ -117,8 +117,8 @@ namespace BlueprintPurge
                 {
                     if (Guid.TryParse(bp, out var guid))
                         blueprints.Add(guid);
-                    else if (rxAlphaNumerical.IsMatch(bp))
-                        types.Add(", " + bp);
+                    else //if (rxAlphaNumerical.IsMatch(bp))
+                        types.Add(/*", " + */bp);
                 }
 
                 if (blueprints.Count == 0 && types.Count == 0)
@@ -194,7 +194,7 @@ namespace BlueprintPurge
                         }
 
                         // if it's an type, check if it's blacklisted
-                        else if (isType && this.types.Any(a => quote.EndsWith(a)))
+                        else if (isType && this.types.Any(a => quote.Contains(a)))
                         {
                             // get id, if it has any
                             if (lastId.TryGetValue(stack.Count, out var id))
@@ -297,7 +297,7 @@ namespace BlueprintPurge
                     break;
                 }
 
-                // include tailing comma
+                // include tailing comma; check if last entry in list
                 if (!purge.IsList)
                 {
                     for (int j = purge.End + 1; j < purge.Data.Length; j++)
@@ -305,8 +305,10 @@ namespace BlueprintPurge
                         char c = (char)purge.Data[j];
                         if (char.IsWhiteSpace(c))
                             continue;
-                        if (c == ',')
+                        else if (c == ',')
                             purge.End = j;
+                        else if (c == ']' || c == '}')
+                            purge.IsLastInList = true;
                         break;
                     }
                 }
@@ -382,6 +384,20 @@ namespace BlueprintPurge
                     // simply clear all chars
                     for (int i = purge.Start; i <= purge.End; i++)
                         purge.Data[i] = (byte)' ';
+
+                    // remove preceding comma
+                    if (purge.IsLastInList)
+                    {
+                        for (int i = purge.Start; i > 0; i--)
+                        {
+                            char c = (char)purge.Data[i];
+                            if (char.IsWhiteSpace(c))
+                                continue;
+                            else if (c == ',')
+                                purge.Data[i] = (byte)' ';
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -390,7 +406,7 @@ namespace BlueprintPurge
             {
                 foreach (var (file, data) in edited)
                 {
-                    CheckSyntax(data);
+                    CheckSyntax(file, data);
                     zip.UpdateEntry(file, data);
                 }
 
@@ -406,17 +422,21 @@ namespace BlueprintPurge
             Clear();
         }
 
-        private bool CheckSyntax(byte[] data)
+        private bool CheckSyntax(string file, byte[] data)
         {
+            string sdata = null;
             try
             {
-                JsonValue.Parse(Encoding.Default.GetString(data));
+                sdata = Encoding.Default.GetString(data);
+                JsonValue.Parse(sdata);
                 return true;
             }
             catch (Exception e)
             {
                 Debug.WriteLine(e.ToString());
-                throw new Exception("Syntax error in output file", e);
+                Debug.WriteLine("in file: " + file);
+                Debug.WriteLine(sdata);
+                throw new Exception("Syntax error in output file " + file, e);
             }
         }
 

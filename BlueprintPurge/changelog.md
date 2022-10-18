@@ -1,5 +1,9 @@
 ﻿# Changelog
 
+## [0.5.0]
+- removed string restriction on $type
+- fixed preceding comma, when purging last entry in a list
+
 ## [0.4.0]
 - added ability to filter $type; simply put it in the blueprint textbox
 

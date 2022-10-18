@@ -1,4 +1,4 @@
-# BlueprintPurge
+﻿# BlueprintPurge
 Tool for Pathfinder: Wrath of the Righteous
 
 Index

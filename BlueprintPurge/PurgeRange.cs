@@ -19,6 +19,8 @@ namespace BlueprintPurge
         public bool IsList { get; set; }
         public string Ref { get; set; }
         public string Peek { get; set; }
+
         public byte[] Data;
+        public bool IsLastInList;
     }
 }
