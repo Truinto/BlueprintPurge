@@ -1,5 +1,8 @@
 ﻿# Changelog
 
+## [0.6.0]
+- updated to NET6, no functional change
+
 ## [0.5.0]
 - removed string restriction on $type
 - fixed preceding comma, when purging last entry in a list

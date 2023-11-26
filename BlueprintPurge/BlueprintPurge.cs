@@ -189,7 +189,7 @@ namespace BlueprintPurge
                         else if (isRef && refs.Contains(quote))
                         {
                             var parentpurge = purges.First(f => f.Ref == quote && f.File == entry.FileName);
-                            purge.Push(new PurgeRange { File = entry.FileName, Guid = parentpurge.Guid, Data = data, Ref = quote, Type = "$ref" });
+                            purge.Push(new PurgeRange() { File = entry.FileName, Guid = parentpurge.Guid, Data = data, Ref = quote, Type = "$ref" });
                             depth.Push(stack.Count);
                         }
 
@@ -200,7 +200,7 @@ namespace BlueprintPurge
                             if (lastId.TryGetValue(stack.Count, out var id))
                                 refs.Add(id);
                             // generate new range, which is finalized later
-                            purge.Push(new PurgeRange { File = entry.FileName, Guid = Guid.Empty, Data = data, Ref = id!, Type = quote });
+                            purge.Push(new PurgeRange() { File = entry.FileName, Guid = Guid.Empty, Data = data, Ref = id!, Type = quote });
                             depth.Push(stack.Count);
                         }
 
@@ -212,7 +212,7 @@ namespace BlueprintPurge
                             if (lastId.TryGetValue(stack.Count, out var id))
                                 refs.Add(id);
                             // generate new range, which is finalized later
-                            purge.Push(new PurgeRange { File = entry.FileName, Guid = guid, Data = data, Ref = id! });
+                            purge.Push(new PurgeRange() { File = entry.FileName, Guid = guid, Data = data, Ref = id! });
                             depth.Push(stack.Count);
                         }
 
